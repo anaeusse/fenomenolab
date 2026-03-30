@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etapas de recuperación PRK</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f0;
+    color: #1a1a18;
+    padding: 32px 16px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 6px; color: #1a1a18; }
+  .subtitle { font-size: 14px; color: #73726c; margin-bottom: 24px; }
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .stages { display: flex; gap: 0; }
+  .stage-btn {
+    flex: 1; padding: 10px 6px 8px; border: none; background: #e8e7e0;
+    cursor: pointer; font-size: 11px; font-weight: 500; color: #73726c;
+    border-bottom: 2px solid #d3d1c7; transition: all .18s;
+    font-family: inherit; line-height: 1.3; text-align: center;
+  }
+  .stage-btn:first-child { border-radius: 8px 0 0 0; }
+  .stage-btn:last-child  { border-radius: 0 8px 0 0; }
+  .stage-btn.active { background: #ffffff; color: #1a1a18; border-bottom-color: transparent; }
+  .stage-btn .dot { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto 5px; }
+
+  .panel {
+    background: #ffffff; border-radius: 0 0 12px 12px;
+    border: 0.5px solid #d3d1c7; border-top: none; padding: 20px;
+  }
+  .panel-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .phase-label { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .panel-title { font-size: 17px; font-weight: 500; color: #1a1a18; }
+  .panel-sub { font-size: 13px; color: #73726c; margin-bottom: 16px; margin-top: 2px; }
+
+  .vision-bar { margin-top: 16px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; color: #73726c; margin-bottom: 5px; }
+  .bar-track { height: 8px; background: #e8e7e0; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+  .bar-sub { font-size: 11px; color: #b4b2a9; margin-top: 4px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .col-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; color: #b4b2a9; margin-bottom: 8px; }
+  .pill-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill { font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+  .pill-sym  { background: #fef3cd; color: #854F0B; }
+  .pill-care { background: #dbeafe; color: #1e40af; }
+  .pill-ok   { background: #dcfce7; color: #166534; }
+  .pill-warn { background: #fee2e2; color: #991b1b; }
+
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+  .nav button {
+    font-size: 12px; padding: 6px 14px; border-radius: 8px;
+    border: 0.5px solid #b4b2a9; background: transparent; color: #73726c;
+    cursor: pointer; font-family: inherit;
+  }
+  .nav button:hover { background: #f1efe8; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .nav-counter { font-size: 12px; color: #b4b2a9; }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .stage-btn { font-size: 10px; padding: 8px 3px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Etapas de recuperación PRK bilateral</h1>
+  <p class="subtitle">Navega por cada fase para ver síntomas, cuidados y qué esperar.</p>
+  <div class="stages" id="stages"></div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const stages = [
+  {
+    label: "Día 1–3", dot: "#E24B4A",
+    phase: "Fase aguda", phaseColor: "#fee2e2", phaseText: "#991b1b",
+    title: "Primeras 72 horas",
+    sub: "La etapa más difícil. El epitelio corneal está expuesto.",
+    vision: 20, visionLabel: "Visión muy borrosa",
+    barColor: "#F09595",
+    symptoms: ["Dolor intenso", "Lagrimeo constante", "Fotofobia severa", "Sensación de arenilla", "Ojo muy rojo"],
+    care: ["Lentes terapéuticos puestos", "Gotas analgésicas c/4–6h", "Antiinflamatorios orales", "Reposo en oscuridad", "No frotar bajo ningún motivo"],
+    allowed: ["Descanso", "Audios / podcasts", "Oscuridad total"],
+    avoid: ["Pantallas", "Luz directa", "Manejar", "Leer"]
+  },
+  {
+    label: "Día 4–7", dot: "#EF9F27",
+    phase: "Epitelización", phaseColor: "#fef3cd", phaseText: "#854F0B",
+    title: "Cierre del epitelio",
+    sub: "Se retiran los lentes terapéuticos. El dolor cede notablemente.",
+    vision: 45, visionLabel: "Borroso pero funcional",
+    barColor: "#FAC775",
+    symptoms: ["Visión fluctuante", "Halos y destellos", "Sequedad ocular", "Sensibilidad moderada", "Leve ardor"],
+    care: ["Retirar lentes terapéuticos (~día 5)", "Lubricantes sin conservantes c/1–2h", "Gotas de esteroides (inicio)", "Proteger del viento y polvo", "Lentes de sol oscuros afuera"],
+    allowed: ["Pantalla 15–20 min con pausas", "Caminar corto", "TV a distancia"],
+    avoid: ["Nadar", "Maquillaje ocular", "Ambientes con polvo"]
+  },
+  {
+    label: "Sem 2–4", dot: "#639922",
+    phase: "Estabilización temprana", phaseColor: "#dcfce7", phaseText: "#166534",
+    title: "Recuperación funcional",
+    sub: "La visión mejora progresivamente aunque puede fluctuar día a día.",
+    vision: 65, visionLabel: "Visión útil, aún imperfecta",
+    barColor: "#97C459",
+    symptoms: ["Halos nocturnos", "Fluctuación visual (peor en la mañana)", "Sequedad persistente", "Sensibilidad a luz brillante"],
+    care: ["Esteroides tópicos en pauta", "Lubricantes frecuentes", "Control semana 1 y 3", "Pantallas con config. de recuperación", "Gafas de sol afuera siempre"],
+    allowed: ["Trabajo de oficina (con pausas)", "Caminar, ejercicio suave", "Conducir (si el médico aprueba)"],
+    avoid: ["Deportes de contacto", "Piscina", "Frotar los ojos"]
+  },
+  {
+    label: "Mes 1–3", dot: "#1D9E75",
+    phase: "Remodelación corneal", phaseColor: "#d1fae5", phaseText: "#065f46",
+    title: "El tejido se asienta",
+    sub: "La córnea termina de remodelar. Algunos días ves mejor que otros.",
+    vision: 80, visionLabel: "Buena en condiciones normales",
+    barColor: "#5DCAA5",
+    symptoms: ["Halos nocturnos (mejoran)", "Sequedad residual", "Leve dificultad con baja luz", "Posible sobre/subcorrección temporal"],
+    care: ["Esteroides en dosis descendente", "Lubricantes según necesidad", "Vitamina C oral (apoya cicatrización)", "Protección solar prolongada"],
+    allowed: ["Actividad normal", "Ejercicio moderado", "Piscina (con gafas)"],
+    avoid: ["Deportes de impacto en ojo", "Rubbing agresivo"]
+  },
+  {
+    label: "Mes 3–6", dot: "#378ADD",
+    phase: "Estabilización", phaseColor: "#dbeafe", phaseText: "#1e40af",
+    title: "Visión estable",
+    sub: "Para la mayoría, la visión final se alcanza entre el mes 3 y 6.",
+    vision: 93, visionLabel: "Muy buena o excelente",
+    barColor: "#85B7EB",
+    symptoms: ["Halos leves en conducción nocturna", "Sequedad leve (especialmente en pantallas)", "Visión nocturna casi normalizada"],
+    care: ["Control a los 3 y 6 meses", "Lubricantes en situaciones de sequedad", "Examen de graduación final"],
+    allowed: ["Vida completamente normal", "Deportes de contacto", "Nadar sin restricciones"],
+    avoid: ["Frotar ojos con fuerza (para siempre)"]
+  },
+  {
+    label: "1 año+", dot: "#7F77DD",
+    phase: "Resultado final", phaseColor: "#ede9fe", phaseText: "#5b21b6",
+    title: "Visión definitiva",
+    sub: "La córnea está completamente estable. El resultado es permanente.",
+    vision: 98, visionLabel: "Resultado permanente",
+    barColor: "#AFA9EC",
+    symptoms: ["Sin síntomas en la mayoría", "Sequedad leve posible en algunos", "Halos mínimos en casos aislados"],
+    care: ["Control anual de fondo de ojo", "Comunicar antecedente PRK antes de cualquier cirugía ocular futura", "Lubricantes solo si hay sequedad"],
+    allowed: ["Todo sin restricciones"],
+    avoid: ["Informar al cirujano sobre PRK si hay cirugía futura"]
+  }
+];
+
+let current = 0;
+
+function render() {
+  const s = stages[current];
+
+  document.getElementById('stages').innerHTML = stages.map((st, i) => `
+    <button class="stage-btn ${i===current?'active':''}" onclick="go(${i})">
+      <div class="dot" style="background:${st.dot};opacity:${i===current?1:.45}"></div>
+      ${st.label}
+    </button>
+  `).join('');
+
+  document.getElementById('panel').innerHTML = `
+    <div class="panel-header">
+      <span class="phase-label" style="background:${s.phaseColor};color:${s.phaseText}">${s.phase}</span>
+    </div>
+    <div class="panel-title">${s.title}</div>
+    <div class="panel-sub">${s.sub}</div>
+
+    <div class="vision-bar">
+      <div class="bar-label"><span>Recuperación visual estimada</span><span style="font-weight:500;color:#1a1a18">${s.vision}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${s.vision}%;background:${s.barColor}"></div></div>
+      <div class="bar-sub">${s.visionLabel}</div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="col-title">Síntomas comunes</div>
+        <div class="pill-list">${s.symptoms.map(x=>`<span class="pill pill-sym">${x}</span>`).join('')}</div>
+      </div>
+      <div>
+        <div class="col-title">Cuidados clave</div>
+        <div class="pill-list">${s.care.map(x=>`<span class="pill pill-care">${x}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:10px">
+      <div>
+        <div class="col-title">Permitido</div>
+        <div class="pill-list">${s.allowed.map(x=>`<span class="pill pill-ok">${x}</span>`).join('')}</div>
+      </div>
+      <div>
+        <div class="col-title">Evitar</div>
+        <div class="pill-list">${s.avoid.map(x=>`<span class="pill pill-warn">${x}</span>`).join('')}</div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button onclick="go(${current-1})" ${current===0?'disabled':''}>← Anterior</button>
+      <span class="nav-counter">${current+1} / ${stages.length}</span>
+      <button onclick="go(${current+1})" ${current===stages.length-1?'disabled':''}>Siguiente →</button>
+    </div>
+  `;
+}
+
+function go(i) {
+  if (i < 0 || i >= stages.length) return;
+  current = i;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
