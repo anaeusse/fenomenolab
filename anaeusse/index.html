@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana Arango — Release & Delivery Manager</title>
+<meta name="description" content="Portfolio and CV of Ana Maria Arango Eusse, Release & Delivery Manager with 6+ years in enterprise healthcare platforms.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f0;
+    color: #1a1a18;
+    min-height: 100vh;
+    padding: 40px 16px 80px;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* ── Back nav ── */
+  .back-nav {
+    margin-bottom: 40px;
+  }
+  .back-nav a {
+    font-size: 13px;
+    color: #b4b2a9;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color .18s;
+  }
+  .back-nav a:hover { color: #73726c; }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 0.5px solid #d3d1c7;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    background: #fef3cd; color: #854F0B;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .hero-name {
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    color: #1a1a18;
+    margin-bottom: 8px;
+  }
+  .hero-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #73726c;
+    margin-bottom: 6px;
+  }
+  .hero-location {
+    font-size: 13px;
+    color: #b4b2a9;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .hero-tagline {
+    font-size: 15px;
+    color: #1a1a18;
+    line-height: 1.6;
+    max-width: 560px;
+  }
+
+  /* ── Section structure ── */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #b4b2a9;
+    margin-bottom: 16px;
+  }
+
+  /* ── Summary ── */
+  .summary-text {
+    font-size: 14px;
+    color: #73726c;
+    line-height: 1.7;
+  }
+
+  /* ── Experience ── */
+  .exp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .exp-card {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .exp-role {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a18;
+    line-height: 1.3;
+  }
+  .exp-company {
+    font-size: 13px;
+    color: #73726c;
+    margin-top: 2px;
+  }
+  .exp-meta {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .exp-period {
+    font-size: 12px;
+    color: #b4b2a9;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .exp-location {
+    font-size: 11px;
+    color: #b4b2a9;
+    margin-top: 2px;
+  }
+  .exp-highlights {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .exp-highlights li {
+    font-size: 13px;
+    color: #73726c;
+    line-height: 1.55;
+    padding-left: 14px;
+    position: relative;
+  }
+  .exp-highlights li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: #d3d1c7;
+  }
+
+  /* ── Skills ── */
+  .skills-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .skills-group {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .skills-group-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #b4b2a9;
+    margin-bottom: 10px;
+  }
+  .skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .skill-tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #f5f5f0;
+    border: 0.5px solid #d3d1c7;
+    color: #1a1a18;
+  }
+  .skill-tag.accent { background: #dbeafe; color: #1e40af; border-color: transparent; }
+  .skill-tag.teal   { background: #d1fae5; color: #065f46; border-color: transparent; }
+  .skill-tag.amber  { background: #fef3cd; color: #854F0B; border-color: transparent; }
+
+  /* ── Education ── */
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .edu-card {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .edu-degree {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a18;
+    line-height: 1.3;
+  }
+  .edu-institution {
+    font-size: 13px;
+    color: #73726c;
+    margin-top: 3px;
+  }
+  .edu-note {
+    font-size: 12px;
+    color: #b4b2a9;
+    margin-top: 5px;
+    font-style: italic;
+  }
+  .edu-period {
+    font-size: 12px;
+    color: #b4b2a9;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Certifications ── */
+  .cert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cert-card {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cert-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cert-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: #ede9fe;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .cert-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a18;
+  }
+  .cert-issuer {
+    font-size: 12px;
+    color: #73726c;
+    margin-top: 2px;
+  }
+  .cert-year {
+    font-size: 12px;
+    color: #b4b2a9;
+    font-weight: 500;
+  }
+
+  /* ── Languages ── */
+  .lang-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .lang-pill {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .lang-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a18;
+  }
+  .lang-level {
+    font-size: 12px;
+    color: #b4b2a9;
+    margin-top: 3px;
+  }
+
+  /* ── Contact CTA ── */
+  .contact-section {
+    background: #ffffff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin-bottom: 48px;
+  }
+  .contact-heading {
+    font-size: 17px;
+    font-weight: 500;
+    color: #1a1a18;
+    margin-bottom: 6px;
+  }
+  .contact-sub {
+    font-size: 14px;
+    color: #73726c;
+    margin-bottom: 20px;
+  }
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: box-shadow .18s, transform .18s;
+  }
+  .contact-btn:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,.09);
+    transform: translateY(-1px);
+  }
+  .contact-btn-primary {
+    background: #1a1a18;
+    color: #f5f5f0;
+  }
+  .contact-btn-secondary {
+    background: #f5f5f0;
+    border: 0.5px solid #d3d1c7;
+    color: #1a1a18;
+  }
+
+  /* ── Footer ── */
+  footer {
+    font-size: 12px; color: #b4b2a9;
+    display: flex; align-items: center; gap: 16px;
+  }
+  footer a { color: #b4b2a9; text-decoration: none; }
+  footer a:hover { color: #73726c; }
+
+  /* ── Loading/error state ── */
+  .loading {
+    padding: 80px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #b4b2a9;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 520px) {
+    body { padding: 28px 16px 64px; }
+    .hero { margin-bottom: 36px; }
+    .exp-meta { text-align: left; }
+    .edu-card { flex-direction: column; }
+    .cert-card { flex-direction: column; }
+    .lang-list { gap: 8px; }
+    .contact-links { flex-direction: column; }
+    .contact-btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="back-nav">
+    <a href="/">&larr; fenomenolab</a>
+  </div>
+
+  <div id="app"><div class="loading">Loading&hellip;</div></div>
+
+  <footer>
+    <span>fenomenolab.co</span>
+    <a href="https://github.com/anaeusse/fenomenolab" target="_blank" rel="noopener">GitHub</a>
+    <a href="/anaeusse/config.html">Edit CV</a>
+  </footer>
+
+</div>
+<script>
+fetch('./data.json')
+  .then(r => { if (!r.ok) throw new Error('Failed to load data'); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById('app').innerHTML =
+      '<div class="loading">Could not load CV data. Make sure data.json is present.</div>';
+  });
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function render(d) {
+  const expCards = d.experience.map(job => `
+    <div class="exp-card">
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">${esc(job.role)}</div>
+          <div class="exp-company">${esc(job.company)}</div>
+        </div>
+        <div class="exp-meta">
+          <div class="exp-period">${esc(job.period)}</div>
+          <div class="exp-location">${esc(job.location)}</div>
+        </div>
+      </div>
+      <ul class="exp-highlights">
+        ${job.highlights.map(h => `<li>${esc(h)}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
+
+  const skillGroups = [
+    { label: 'Core Expertise', items: d.skills.core, cls: 'accent' },
+    { label: 'Leadership & Methods', items: d.skills.leadership, cls: 'teal' },
+    { label: 'Software & Tools', items: d.skills.software, cls: '' },
+  ].map(g => `
+    <div class="skills-group">
+      <div class="skills-group-label">${esc(g.label)}</div>
+      <div class="skills-tags">
+        ${g.items.map(s => `<span class="skill-tag ${g.cls}">${esc(s)}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const eduCards = d.education.map(e => `
+    <div class="edu-card">
+      <div>
+        <div class="edu-degree">${esc(e.degree)}</div>
+        <div class="edu-institution">${esc(e.institution)}</div>
+        ${e.note ? `<div class="edu-note">${esc(e.note)}</div>` : ''}
+      </div>
+      <div class="edu-period">${esc(e.period)}</div>
+    </div>
+  `).join('');
+
+  const certCards = d.certifications.map(c => `
+    <div class="cert-card">
+      <div class="cert-badge">
+        <div class="cert-icon">&#127942;</div>
+        <div>
+          <div class="cert-name">${esc(c.name)}</div>
+          <div class="cert-issuer">${esc(c.issuer)}</div>
+        </div>
+      </div>
+      <div class="cert-year">${esc(c.year)}</div>
+    </div>
+  `).join('');
+
+  const langPills = d.languages.map(l => `
+    <div class="lang-pill">
+      <div class="lang-name">${esc(l.name)}</div>
+      <div class="lang-level">${esc(l.level)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+
+    <section class="hero">
+      <div class="hero-tag">Portfolio</div>
+      <h1 class="hero-name">${esc(d.name)}</h1>
+      <div class="hero-title">${esc(d.title)}</div>
+      <div class="hero-location">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1.5C5.51 1.5 3.5 3.51 3.5 6c0 3.75 4.5 8.5 4.5 8.5S12.5 9.75 12.5 6c0-2.49-2.01-4.5-4.5-4.5z"/>
+          <circle cx="8" cy="6" r="1.5"/>
+        </svg>
+        ${esc(d.location)}
+      </div>
+      <p class="hero-tagline">${esc(d.tagline)}</p>
+    </section>
+
+    <section class="section">
+      <div class="section-label">About</div>
+      <p class="summary-text">${esc(d.summary)}</p>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Experience</div>
+      <div class="exp-list">${expCards}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Skills</div>
+      <div class="skills-groups">${skillGroups}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Education</div>
+      <div class="edu-list">${eduCards}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Certifications</div>
+      <div class="cert-list">${certCards}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Languages</div>
+      <div class="lang-list">${langPills}</div>
+    </section>
+
+    <div class="contact-section">
+      <div class="contact-heading">Let&rsquo;s connect</div>
+      <div class="contact-sub">${esc(d.contact.email)}</div>
+      <div class="contact-links">
+        <a class="contact-btn contact-btn-primary" href="mailto:${esc(d.contact.email)}">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1.5" y="3" width="13" height="10" rx="1.5"/>
+            <path d="M1.5 5l6.5 4.5L14.5 5"/>
+          </svg>
+          Send email
+        </a>
+        <a class="contact-btn contact-btn-secondary" href="${esc(d.contact.linkedin)}" target="_blank" rel="noopener">
+          LinkedIn &rarr;
+        </a>
+        <a class="contact-btn contact-btn-secondary" href="tel:${esc(d.contact.phone)}">
+          ${esc(d.contact.phone)}
+        </a>
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

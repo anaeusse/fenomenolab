@@ -1,0 +1,124 @@
+{
+  "name": "Ana Maria Arango Eusse",
+  "title": "Release & Delivery Manager",
+  "location": "Medellín, Colombia",
+  "tagline": "6+ years leading enterprise-scale software releases in cloud environments, with a strong focus on healthcare platforms.",
+  "contact": {
+    "email": "ana.aeusse@gmail.com",
+    "phone": "(+57) 300 219 7672",
+    "linkedin": "https://linkedin.com/in/anaeusse"
+  },
+  "summary": "Certified Scrum Master fluent in English, Spanish, and French, experienced in orchestrating UAT-to-Production deployments, governing change through CABs, and driving Go/No-Go decisions. Proven track record scaling deployment throughput, reducing operational overhead, and aligning technical execution with business outcomes through Agile delivery and strong stakeholder leadership.",
+  "experience": [
+    {
+      "role": "Release / Project Manager",
+      "company": "FullStack Labs (DexCare Health)",
+      "period": "2024 – Present",
+      "location": "Medellín, Colombia",
+      "highlights": [
+        "Led Release & Deployment Operations, orchestrating end-to-end release lifecycles from UAT to Production in cloud environments for major enterprise healthcare clients.",
+        "Scaled deployment frequency by 50% (194+ major events in 2025), coordinating 277 customer deployments and 147 hotfixes while reducing deployment hours by 30% year-over-year.",
+        "Reduced technical support hours by 69% by optimizing workflows and centralizing release ownership, enabling teams to focus on upstream quality.",
+        "Implemented strategic separation of Release and Deployment processes, designing scalable workflows for \"Team Releases\" and \"Customer Deployments\" with distinct QA approvals.",
+        "Co-created Deployment Request Board and established Change Advisory Board (CAB) to govern deployment windows and prevent collisions between planned changes.",
+        "Launched Deployment Tracker Dashboard, providing real-time visibility into 365 days of history for 5,862+ customer changes.",
+        "Led release readiness sessions and Go/No-Go decisions, developing runbooks and compatibility matrices to identify and mitigate implementation risks."
+      ]
+    },
+    {
+      "role": "Project Manager",
+      "company": "Koombea",
+      "period": "2023 – 2024",
+      "location": "Medellín, Colombia",
+      "highlights": [
+        "Accelerated delivery by 15% through Agile planning and Scrum facilitation.",
+        "Reduced issues by 25% by proactively identifying and mitigating risks.",
+        "Enhanced efficiency by 10% using prioritization frameworks and structured Jira release versions.",
+        "Partnered with Product Owners to define commitments, estimations, and roadmaps.",
+        "Ensured project success through clear communication and strict timeline adherence."
+      ]
+    },
+    {
+      "role": "Mid-Level Project Manager",
+      "company": "Talent.com",
+      "period": "2021 – 2023",
+      "location": "Medellín, Colombia",
+      "highlights": [
+        "Led a global team of 16, reducing delivery time by 15% and completing 10+ projects on time.",
+        "Increased project delivery speed by 15% and reduced costs by 20% through Agile coaching and process optimization.",
+        "Launched B2B product increasing user engagement by 20%.",
+        "Delivered 7+ backend products using Agile and Waterfall methodologies.",
+        "Led SEO initiatives to achieve corporate OKRs and align roadmap objectives."
+      ]
+    },
+    {
+      "role": "Project Manager",
+      "company": "Ocudos OQ2 S.A.S",
+      "period": "2019 – 2021",
+      "location": "Medellín, Colombia",
+      "highlights": [
+        "Managed end-to-end project delivery across product and communications initiatives.",
+        "Coordinated cross-functional teams and external stakeholders to meet project milestones."
+      ]
+    },
+    {
+      "role": "Audiovisual Communicator",
+      "company": "Ocudos OQ2 S.A.S",
+      "period": "2018 – 2019",
+      "location": "Medellín, Colombia",
+      "highlights": [
+        "Produced audiovisual content and managed communications projects."
+      ]
+    }
+  ],
+  "skills": {
+    "core": [
+      "Release Management & Readiness",
+      "Deployment Orchestration (UAT → PROD)",
+      "Dependency & Risk Management",
+      "Change Management (CAB, Go/No-Go)",
+      "SDLC (Agile & Waterfall)"
+    ],
+    "leadership": [
+      "Agile / Scrum Methodologies",
+      "Stakeholder Management",
+      "Team Leadership & Prioritization",
+      "Delivery Management"
+    ],
+    "software": [
+      "Jira / Jira Service Management",
+      "Confluence",
+      "Argo CD",
+      "GitHub",
+      "Notion",
+      "Figma",
+      "Office 365",
+      "Google Suite"
+    ]
+  },
+  "education": [
+    {
+      "degree": "Post-Graduate Degree — Brand Management",
+      "institution": "Universidad de Medellín",
+      "period": "2020 – 2021"
+    },
+    {
+      "degree": "BA — Audiovisual Communication",
+      "institution": "Universidad de Medellín",
+      "period": "2012 – 2017",
+      "note": "Award: Best national score — Saber Pro Exam (Communication & Journalism)"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Certified ScrumMaster® (CSM®)",
+      "issuer": "Scrum Alliance",
+      "year": "2023"
+    }
+  ],
+  "languages": [
+    { "name": "Spanish", "level": "Native" },
+    { "name": "English", "level": "C1" },
+    { "name": "French", "level": "B1" }
+  ]
+}
