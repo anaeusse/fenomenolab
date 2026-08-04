@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liquidador de nómina · Colombia 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --lienzo:#EAE9F2;
+    --carta:#FFFFFF;
+    --tinta:#1B1B3A;
+    --tinta-media:#4A4A6B;
+    --tinta-suave:#7C7C99;
+    --linea:#DAD8E7;
+    --linea-fina:#E9E7F1;
+    --devengo:#0F7A66;
+    --descuento:#B04B34;
+    --neto:#3B3785;
+    --neutro:#A3A1BC;
+    --realce:#DFDCF3;
+    --alerta:#8A5A00;
+    --alerta-fondo:#FBF0D8;
+    --r:14px;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --display:"Bricolage Grotesque","Inter",system-ui,sans-serif;
+    --texto:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--lienzo);color:var(--tinta);font-family:var(--texto);
+    font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:20px 16px 64px;
+  }
+  .envoltura{max-width:1140px;margin:0 auto}
+
+  .cabecera{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+  .titulo{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,38px);letter-spacing:-0.02em;line-height:1.05;margin:0}
+  .subtitulo{color:var(--tinta-media);font-size:13.5px;margin:6px 0 0;max-width:56ch}
+  .guardado{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-suave);border:1px solid var(--linea);background:var(--carta);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .guardado[data-on="1"]{color:var(--devengo);border-color:#BFE0D8}
+
+  .resumen{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:22px 24px;margin-bottom:22px}
+  .resumen-fila{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px}
+  .etiqueta-neto{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-suave);margin-bottom:2px}
+  .cifra-neto{font-family:var(--mono);font-weight:600;font-size:clamp(30px,6vw,46px);letter-spacing:-0.03em;color:var(--neto);line-height:1}
+  .mini-datos{display:flex;gap:26px;flex-wrap:wrap}
+  .mini-dato .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave)}
+  .mini-dato .v{font-family:var(--mono);font-size:16px;font-weight:500}
+  .mini-dato .v.pos{color:var(--devengo)}
+  .mini-dato .v.neg{color:var(--descuento)}
+
+  .regla{margin-top:20px}
+  .regla-barra{display:flex;height:26px;border-radius:6px;overflow:hidden;background:var(--linea-fina)}
+  .seg{height:100%;transition:width .35s cubic-bezier(.4,0,.2,1)}
+  .seg.s-neto{background:var(--neto)}
+  .seg.s-ss{background:var(--devengo)}
+  .seg.s-rte{background:var(--descuento)}
+  .seg.s-otros{background:var(--neutro)}
+  .regla-leyenda{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:10px;font-size:12px;color:var(--tinta-media)}
+  .regla-leyenda span{display:inline-flex;align-items:center;gap:7px}
+  .punto{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  .rejilla{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start}
+  @media (max-width:900px){.rejilla{grid-template-columns:1fr}}
+
+  .tarjeta{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:20px 22px;margin-bottom:22px}
+  .tarjeta h2{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-0.01em;margin:0 0 3px}
+  .tarjeta .ayuda{font-size:12.5px;color:var(--tinta-suave);margin:0 0 16px}
+  .tarjeta.pegajosa{position:sticky;top:20px}
+  @media (max-width:900px){.tarjeta.pegajosa{position:static}}
+
+  .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  label.campo{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--tinta-media);font-weight:500}
+  input[type=text],input[type=number],input[type=month],select{
+    font-family:var(--mono);font-size:14.5px;color:var(--tinta);
+    background:#FBFBFE;border:1px solid var(--linea);border-radius:9px;padding:9px 11px;width:100%;
+  }
+  select{font-family:var(--texto);font-size:13.5px}
+  input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--neto);outline-offset:1px}
+
+  /* jornada */
+  .jornada{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:16px}
+  .celda{border:1px solid var(--linea-fina);border-radius:10px;padding:11px 13px}
+  .celda .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave)}
+  .celda .v{font-family:var(--mono);font-size:17px;margin-top:3px}
+  .celda.destacada{background:var(--realce);border-color:transparent}
+  .celda.destacada .v{color:var(--neto);font-weight:600}
+  .festivos-lista{margin-top:12px;font-size:12.5px;color:var(--tinta-media);line-height:1.7}
+  .festivos-lista .f{display:inline-block;background:var(--linea-fina);border-radius:7px;padding:3px 9px;margin:0 6px 6px 0;font-family:var(--mono);font-size:11.5px}
+
+  /* horas */
+  .hora{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dotted var(--linea)}
+  .hora:last-child{border-bottom:none}
+  .hora .nombre{font-size:13.5px;line-height:1.3}
+  .hora .tarifa{font-family:var(--mono);font-size:11.5px;color:var(--tinta-suave);display:block;margin-top:2px}
+  .paso{display:flex;align-items:center;border:1px solid var(--linea);border-radius:9px;overflow:hidden;background:#FBFBFE}
+  .paso button{width:30px;height:34px;border:none;background:transparent;color:var(--tinta-media);font-size:17px;line-height:1;cursor:pointer;font-family:var(--texto)}
+  .paso button:hover{background:var(--realce)}
+  .paso input{width:56px;text-align:center;border:none;border-left:1px solid var(--linea);border-right:1px solid var(--linea);border-radius:0;background:transparent;padding:8px 2px}
+  .hora .valor{font-family:var(--mono);font-size:14px;text-align:right;min-width:96px;color:var(--devengo)}
+  .hora .valor.cero{color:var(--tinta-suave)}
+  .total-horas{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:13px;border-top:1px solid var(--linea);font-size:13.5px}
+  .total-horas .n{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--devengo)}
+
+  .item{display:grid;grid-template-columns:1fr 130px auto;gap:10px;align-items:center;margin-bottom:9px}
+  .item input[type=text].nombre-item{font-family:var(--texto);font-size:13.5px}
+  .item .quitar{background:transparent;border:1px solid var(--linea);color:var(--tinta-suave);border-radius:8px;width:32px;height:34px;cursor:pointer;font-size:15px}
+  .item .quitar:hover{border-color:var(--descuento);color:var(--descuento)}
+  .marca{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tinta-media);margin:2px 0 12px}
+  .marca input{accent-color:var(--neto)}
+  .agregar{background:var(--realce);border:none;color:var(--neto);font-family:var(--texto);font-weight:600;font-size:12.5px;border-radius:9px;padding:8px 14px;cursor:pointer}
+  .agregar:hover{filter:brightness(.96)}
+
+  .bloque{margin-bottom:18px}
+  .bloque-titulo{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave);border-bottom:1px solid var(--linea);padding-bottom:7px;margin-bottom:9px}
+  .bloque-titulo .total{font-size:14px;letter-spacing:0;color:var(--tinta);font-weight:600;text-transform:none}
+  .linea{display:flex;align-items:baseline;gap:8px;font-size:13.5px;padding:4px 0}
+  .linea .l{color:var(--tinta-media)}
+  .linea .puntos{flex:1;border-bottom:1px dotted var(--linea);transform:translateY(-3px)}
+  .linea .n{font-family:var(--mono);font-size:13.5px;white-space:nowrap}
+  .linea.sub .l,.linea.sub .n{color:var(--tinta-suave);font-size:12.5px}
+  .totalizador{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--realce);border-radius:10px;padding:13px 16px;margin-top:16px}
+  .totalizador .l{font-family:var(--display);font-weight:600;font-size:14.5px}
+  .totalizador .n{font-family:var(--mono);font-weight:600;font-size:20px;color:var(--neto)}
+  .bases{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .base{border:1px solid var(--linea-fina);border-radius:10px;padding:10px 12px}
+  .base .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave)}
+  .base .v{font-family:var(--mono);font-size:14px;margin-top:2px}
+
+  .aviso{display:flex;gap:9px;font-size:12.5px;line-height:1.45;border-radius:10px;padding:10px 13px;margin-top:14px}
+  .aviso.ok{background:#E8F4F0;color:#0B5A4B}
+  .aviso.ojo{background:var(--alerta-fondo);color:var(--alerta)}
+  .aviso .ico{font-family:var(--mono);font-weight:600}
+
+  details.plegable{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:0 22px;margin-bottom:22px}
+  details.plegable>summary{list-style:none;cursor:pointer;padding:16px 0;font-family:var(--display);font-size:15px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  details.plegable>summary::-webkit-details-marker{display:none}
+  details.plegable>summary::after{content:"+";font-family:var(--mono);color:var(--tinta-suave);font-size:18px}
+  details.plegable[open]>summary::after{content:"–"}
+  details.plegable .interior{padding-bottom:20px}
+  .sub-titulo{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave);font-weight:500;margin:22px 0 10px}
+  .segmentado{display:inline-flex;border:1px solid var(--linea);border-radius:9px;overflow:hidden;background:#FBFBFE}
+  .segmentado button{border:none;background:transparent;font-family:var(--texto);font-size:12.5px;padding:8px 14px;cursor:pointer;color:var(--tinta-media)}
+  .segmentado button[aria-pressed="true"]{background:var(--neto);color:#fff;font-weight:600}
+  .pie{font-size:12px;color:var(--tinta-suave);line-height:1.6;margin-top:26px;max-width:80ch}
+  .pie b{color:var(--tinta-media);font-weight:600}
+  .restaurar{background:transparent;border:1px solid var(--linea);color:var(--tinta-media);border-radius:9px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:var(--texto)}
+  .restaurar:hover{border-color:var(--descuento);color:var(--descuento)}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .tarjeta,.resumen,details.plegable{border-color:#ccc;break-inside:avoid}
+    .no-imprimir{display:none !important}
+    .rejilla{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){.seg{transition:none}}
+</style>
+</head>
+<body>
+<div class="envoltura">
+
+  <header class="cabecera">
+    <div>
+      <h1 class="titulo">Liquidador de nómina</h1>
+      <p class="subtitulo">Contrato de 40 horas semanales, lunes a viernes. Las horas por encima de esa jornada se pagan a la tarifa del contrato con el recargo de ley. Todo se guarda en este navegador.</p>
+    </div>
+    <div class="guardado" id="guardado">Sin guardar</div>
+  </header>
+
+  <section class="resumen">
+    <div class="resumen-fila">
+      <div>
+        <div class="etiqueta-neto">Neto a recibir</div>
+        <div class="cifra-neto" id="neto">$ 0</div>
+      </div>
+      <div class="mini-datos">
+        <div class="mini-dato"><div class="k">Devengos</div><div class="v pos" id="mini-dev">$ 0</div></div>
+        <div class="mini-dato"><div class="k">Descuentos</div><div class="v neg" id="mini-des">$ 0</div></div>
+        <div class="mini-dato"><div class="k">Horas adicionales</div><div class="v" id="mini-horas">0 h</div></div>
+      </div>
+    </div>
+    <div class="regla">
+      <div class="regla-barra" id="barra">
+        <div class="seg s-neto" style="width:100%"></div>
+        <div class="seg s-ss" style="width:0"></div>
+        <div class="seg s-rte" style="width:0"></div>
+        <div class="seg s-otros" style="width:0"></div>
+      </div>
+      <div class="regla-leyenda">
+        <span><i class="punto" style="background:var(--neto)"></i>Neto <b id="pc-neto">—</b></span>
+        <span><i class="punto" style="background:var(--devengo)"></i>Salud, pensión y FSP <b id="pc-ss">—</b></span>
+        <span><i class="punto" style="background:var(--descuento)"></i>Retención en la fuente <b id="pc-rte">—</b></span>
+        <span><i class="punto" style="background:var(--neutro)"></i>Otros descuentos <b id="pc-otros">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="rejilla">
+    <div class="no-imprimir">
+
+      <section class="tarjeta">
+        <h2>Salario y jornada</h2>
+        <p class="ayuda">Los festivos no bajan el sueldo: solo reducen las horas que trabajas en el mes.</p>
+        <div class="campos">
+          <label class="campo">Salario base mensual
+            <input type="text" id="salarioBase" inputmode="numeric">
+          </label>
+          <label class="campo">Mes
+            <input type="month" id="mes">
+          </label>
+          <label class="campo">Horas por día
+            <input type="number" id="horasDia" min="1" max="12" step="0.5">
+          </label>
+          <label class="campo">Festivos entre semana
+            <input type="number" id="festivos" min="0" max="10" step="1">
+          </label>
+        </div>
+        <div class="jornada">
+          <div class="celda"><div class="k">Días hábiles</div><div class="v" id="c-habiles">0</div></div>
+          <div class="celda"><div class="k">Días trabajados</div><div class="v" id="c-trabajados">0</div></div>
+          <div class="celda destacada"><div class="k">Horas del mes</div><div class="v" id="c-horas">0</div></div>
+          <div class="celda"><div class="k">Hora ordinaria</div><div class="v" id="c-hora">$ 0</div></div>
+        </div>
+        <div class="festivos-lista" id="lista-festivos"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Horas adicionales</h2>
+        <p class="ayuda">Horas trabajadas por encima de las 40 semanales. La tarifa del contrato corresponde a la hora extra diurna; las demás suben con el recargo de ley.</p>
+        <div class="campos">
+          <label class="campo">Tarifa hora adicional (contrato)
+            <input type="text" id="tarifaHora" inputmode="numeric">
+          </label>
+          <label class="campo">Base de cálculo
+            <select id="modo">
+              <option value="pactada">Tarifa del contrato</option>
+              <option value="legal">Salario ÷ horas de jornada</option>
+            </select>
+          </label>
+        </div>
+        <div id="lista-extras" style="margin-top:14px"></div>
+        <div class="total-horas">
+          <span id="txt-horas">0 horas adicionales</span>
+          <span class="n" id="valor-extras">$ 0</span>
+        </div>
+        <div id="avisoTarifa"></div>
+        <div id="avisoLimite"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Otros devengos</h2>
+        <p class="ayuda">Marca <b>salarial</b> si el pago constituye salario y entra al IBC. Marca <b>gravado</b> si suma a la base de retención.</p>
+        <div id="lista-devengos"></div>
+        <button class="agregar" id="add-devengo">+ Agregar devengo</button>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Otros descuentos</h2>
+        <p class="ayuda">Anticipos, libranzas, préstamos, deducción de food card.</p>
+        <div id="lista-descuentos"></div>
+        <button class="agregar" id="add-descuento">+ Agregar descuento</button>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Retención en la fuente</h2>
+        <p class="ayuda">Procedimiento 1, depuración mensual. Si ya conoces el valor exacto de tu empresa, escríbelo a mano.</p>
+        <div class="segmentado" style="margin-bottom:14px">
+          <button type="button" id="rte-auto" aria-pressed="true">Calcular</button>
+          <button type="button" id="rte-manual" aria-pressed="false">Escribir valor</button>
+        </div>
+        <div id="rte-campos">
+          <label class="marca"><input type="checkbox" id="dependientes"> Tengo dependientes (10% del ingreso, tope 32 UVT)</label>
+          <div class="campos">
+            <label class="campo">Medicina prepagada mensual
+              <input type="text" id="prepagada" inputmode="numeric">
+            </label>
+            <label class="campo">Intereses de vivienda mensual
+              <input type="text" id="vivienda" inputmode="numeric">
+            </label>
+            <label class="campo">Aportes voluntarios y AFC
+              <input type="text" id="voluntarios" inputmode="numeric">
+            </label>
+          </div>
+        </div>
+        <div id="rte-manual-campo" style="display:none">
+          <label class="campo" style="max-width:220px">Retención del mes
+            <input type="text" id="rteManual" inputmode="numeric">
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <div>
+      <section class="tarjeta pegajosa">
+        <h2>Comprobante</h2>
+        <p class="ayuda" id="fecha-nota">Periodo</p>
+
+        <div class="bloque">
+          <div class="bloque-titulo"><span>Devengos</span><span class="total" id="t-devengos">$ 0</span></div>
+          <div id="det-devengos"></div>
+        </div>
+
+        <div class="bloque">
+          <div class="bloque-titulo"><span>Descuentos de ley</span><span class="total" id="t-legales">$ 0</span></div>
+          <div id="det-legales"></div>
+        </div>
+
+        <div class="bloque">
+          <div class="bloque-titulo"><span>Otros descuentos</span><span class="total" id="t-otros">$ 0</span></div>
+          <div id="det-otros"></div>
+        </div>
+
+        <div class="bases">
+          <div class="base"><div class="k">IBC seguridad social</div><div class="v" id="b-ibc">$ 0</div></div>
+          <div class="base"><div class="k">Base gravable retefuente</div><div class="v" id="b-rte">$ 0</div></div>
+        </div>
+
+        <div class="totalizador">
+          <span class="l">Neto a recibir</span>
+          <span class="n" id="neto2">$ 0</span>
+        </div>
+
+        <div class="bloque" style="margin-top:20px">
+          <div class="bloque-titulo"><span>Provisiones causadas</span><span class="total" id="t-prov">$ 0</span></div>
+          <div id="det-prov"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <details class="plegable no-imprimir">
+    <summary>Parámetros legales</summary>
+    <div class="interior">
+      <div class="campos">
+        <label class="campo">UVT
+          <input type="text" id="p-uvt" inputmode="numeric">
+        </label>
+        <label class="campo">Salario mínimo
+          <input type="text" id="p-smlmv" inputmode="numeric">
+        </label>
+        <label class="campo">Salud empleado %
+          <input type="number" id="p-salud" step="0.5">
+        </label>
+        <label class="campo">Pensión empleado %
+          <input type="number" id="p-pension" step="0.5">
+        </label>
+        <label class="campo">Horas semanales del contrato
+          <input type="number" id="p-horasSemana" step="1" min="1" max="48">
+        </label>
+      </div>
+      <h3 class="sub-titulo">Recargo de la hora extra %</h3>
+      <div class="campos" id="p-recargos"></div>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="restaurar" id="restaurar">Restaurar valores de 2026</button>
+        <button class="restaurar" id="limpiar-horas">Poner horas en cero</button>
+      </div>
+      <p class="pie" style="margin-top:18px">
+        Vigentes a julio de 2026: UVT $52.374 (Resolución DIAN 000238 de 2025) y salario mínimo $1.750.905.
+        La jornada nocturna empieza a las 7:00 p.m. y el recargo dominical o festivo es del 90% desde el 1.º de julio de 2026
+        (Ley 2466 de 2025; sube a 100% en julio de 2027). Tu contrato pacta 40 horas semanales, por debajo del máximo legal de 42.
+      </p>
+    </div>
+  </details>
+
+  <p class="pie">
+    <b>Cómo leer este cálculo.</b> Las horas adicionales constituyen salario, así que entran al IBC de seguridad social y a la base de retención.
+    La retención es una estimación con el procedimiento 1: descuenta aportes obligatorios, las deducciones que marques y la renta exenta del 25%,
+    aplica el límite del 40% y la tabla en UVT, y aproxima al múltiplo de mil. Tu empresa puede llegar a una cifra algo distinta según los soportes que tenga registrados.
+    Los festivos se calculan con el calendario colombiano, incluida la Ley Emiliani que traslada varios al lunes siguiente; puedes corregir el número a mano.
+    Esta herramienta orienta el cálculo, no reemplaza la liquidación oficial de tu empleador.
+  </p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FMT = new Intl.NumberFormat('es-CO', {maximumFractionDigits:0});
+  var FMT1 = new Intl.NumberFormat('es-CO', {maximumFractionDigits:1});
+  function money(n){ return '$ ' + FMT.format(Math.round(n||0)); }
+  function parseNum(s){ var d = String(s).replace(/[^\d]/g,''); return d ? parseInt(d,10) : 0; }
+  function el(id){ return document.getElementById(id); }
+
+  /* ---------- festivos de Colombia ---------- */
+  function pascua(y){
+    var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),
+        g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,
+        l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),
+        mes=Math.floor((h+l-7*m+114)/31),dia=((h+l-7*m+114)%31)+1;
+    return new Date(y,mes-1,dia);
+  }
+  function lunesSiguiente(d){ var x=new Date(d.getTime()), w=x.getDay(); if(w!==1) x.setDate(x.getDate()+((1-w+7)%7)); return x; }
+  function masDias(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+  function festivosAno(y){
+    var P=pascua(y), L=[];
+    [[0,1,'Año Nuevo'],[4,1,'Día del Trabajo'],[6,20,'Independencia'],[7,7,'Batalla de Boyacá'],[11,8,'Inmaculada'],[11,25,'Navidad']]
+      .forEach(function(f){ L.push({d:new Date(y,f[0],f[1]), n:f[2]}); });
+    [[0,6,'Reyes'],[2,19,'San José'],[5,29,'San Pedro y San Pablo'],[7,15,'Asunción'],[9,12,'Día de la Raza'],[10,1,'Todos los Santos'],[10,11,'Cartagena']]
+      .forEach(function(f){ L.push({d:lunesSiguiente(new Date(y,f[0],f[1])), n:f[2]}); });
+    L.push({d:masDias(P,-3), n:'Jueves Santo'});
+    L.push({d:masDias(P,-2), n:'Viernes Santo'});
+    L.push({d:masDias(P,43), n:'Ascensión'});
+    L.push({d:masDias(P,64), n:'Corpus Christi'});
+    L.push({d:masDias(P,71), n:'Sagrado Corazón'});
+    L.sort(function(a,b){ return a.d - b.d; });
+    return L;
+  }
+  function festivosDelMes(y,m){
+    return festivosAno(y).filter(function(f){
+      return f.d.getFullYear()===y && f.d.getMonth()===m && f.d.getDay()>=1 && f.d.getDay()<=5;
+    });
+  }
+  function diasHabiles(y,m){
+    var n = new Date(y, m+1, 0).getDate(), c = 0;
+    for (var i=1;i<=n;i++){ var w = new Date(y,m,i).getDay(); if (w>=1 && w<=5) c++; }
+    return c;
+  }
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var DIAS = ['dom','lun','mar','mié','jue','vie','sáb'];
+
+  /* ---------- catálogo de horas extra ---------- */
+  var TIPOS = [
+    {id:'ed',  nombre:'Extra diurna',                       detalle:'6:00 a.m. a 7:00 p.m., lunes a sábado', pct:25},
+    {id:'en',  nombre:'Extra nocturna',                      detalle:'después de las 7:00 p.m.',              pct:75},
+    {id:'edd', nombre:'Extra diurna en domingo o festivo',   detalle:'incluye el recargo dominical',          pct:115},
+    {id:'end', nombre:'Extra nocturna en domingo o festivo', detalle:'nocturna más dominical',                pct:165}
+  ];
+
+  var PARAMS_BASE = {uvt:52374, smlmv:1750905, salud:4, pension:4, horasSemana:40, pct:{}};
+  TIPOS.forEach(function(t){ PARAMS_BASE.pct[t.id] = t.pct; });
+
+  var hoy = new Date();
+  function estadoInicial(){
+    return {
+      salarioBase:13200000,
+      anio:hoy.getFullYear(),
+      mesIdx:hoy.getMonth(),
+      horasDia:8,
+      festivos:null,           /* null = automático */
+      tarifaHora:82500,
+      modo:'pactada',
+      horas:{ed:0,en:0,edd:0,end:0},
+      devengos:[{n:'Food Card', v:500000, salarial:false, gravado:true}],
+      descuentos:[{n:'Food Card deducción', v:500000}],
+      rte:{modo:'auto', manual:0, dependientes:false, prepagada:0, vivienda:0, voluntarios:0},
+      params:JSON.parse(JSON.stringify(PARAMS_BASE))
+    };
+  }
+  var S = estadoInicial();
+
+  /* ---------- persistencia ---------- */
+  var CLAVE = 'liquidador-nomina-co-v3';
+  function guardar(){
+    var data = JSON.stringify(S), ok = false;
+    try{
+      if (window.storage && typeof window.storage.set === 'function'){
+        var p = window.storage.set(CLAVE, data);
+        if (p && typeof p.catch === 'function') p.catch(function(){});
+        ok = true;
+      }
+    }catch(e){}
+    try{ localStorage.setItem(CLAVE, data); ok = true; }catch(e){}
+    var g = el('guardado');
+    g.textContent = ok ? 'Guardado' : 'No se pudo guardar';
+    g.setAttribute('data-on', ok ? '1' : '0');
+  }
+  var tGuardar = null;
+  function guardarPronto(){ clearTimeout(tGuardar); tGuardar = setTimeout(guardar, 500); }
+
+  function fusionar(base, g){
+    if(!g || typeof g !== 'object') return base;
+    Object.keys(base).forEach(function(k){
+      if (g[k] === undefined) return;
+      if (g[k] === null){ base[k] = null; return; }
+      if (Array.isArray(base[k])) base[k] = g[k];
+      else if (base[k] && typeof base[k] === 'object') base[k] = fusionar(base[k], g[k]);
+      else base[k] = g[k];
+    });
+    return base;
+  }
+  function localGet(){ try{ return localStorage.getItem(CLAVE); }catch(e){ return null; } }
+  function cargar(cb){
+    var listo = function(txt){
+      if(txt){ try{ S = fusionar(estadoInicial(), JSON.parse(txt)); }catch(e){} }
+      cb();
+    };
+    try{
+      if (window.storage && typeof window.storage.get === 'function'){
+        var p = window.storage.get(CLAVE);
+        if (p && typeof p.then === 'function'){
+          p.then(function(r){ listo(r && r.value); }).catch(function(){ listo(localGet()); });
+          return;
+        }
+      }
+    }catch(e){}
+    listo(localGet());
+  }
+
+  /* ---------- cálculo ---------- */
+  function festivosMes(){
+    return festivosDelMes(S.anio, S.mesIdx);
+  }
+  function numFestivos(){
+    return (S.festivos === null || S.festivos === undefined) ? festivosMes().length : Math.max(0, Number(S.festivos)||0);
+  }
+  function calcular(){
+    var P = S.params;
+    var habiles = diasHabiles(S.anio, S.mesIdx);
+    var fest = Math.min(numFestivos(), habiles);
+    var trabajados = habiles - fest;
+    var horasMes = trabajados * (Number(S.horasDia)||0);
+
+    /* hora ordinaria: salario ÷ (horas semanales × 30 ÷ 6), convención de nómina */
+    var divisor = (Number(P.horasSemana)||40) * 5;
+    var horaLegal = S.salarioBase / divisor;
+    var factorED = 1 + P.pct.ed/100;
+    var horaBase = (S.modo === 'pactada') ? (S.tarifaHora / factorED) : horaLegal;
+
+    var detHoras = [], totalHoras = 0, valorHoras = 0;
+    TIPOS.forEach(function(t){
+      var q = Number(S.horas[t.id]) || 0;
+      var tarifa = horaBase * (1 + P.pct[t.id]/100);
+      if (q > 0){
+        detHoras.push({nombre:t.nombre, q:q, tarifa:tarifa, valor:q*tarifa});
+        totalHoras += q; valorHoras += q * tarifa;
+      }
+    });
+
+    var otrosSalariales = 0, otrosNoSalariales = 0, otrosGravados = 0;
+    S.devengos.forEach(function(d){
+      var v = Number(d.v)||0;
+      if (d.salarial) otrosSalariales += v; else otrosNoSalariales += v;
+      if (d.gravado) otrosGravados += v;
+    });
+
+    var ibc = S.salarioBase + valorHoras + otrosSalariales;
+    var ibcTope = Math.min(ibc, 25 * P.smlmv);
+    var salud = ibcTope * P.salud/100;
+    var pension = ibcTope * P.pension/100;
+
+    var enSm = P.smlmv ? ibcTope / P.smlmv : 0, pctFsp = 0;
+    if (enSm >= 20) pctFsp = 2.0;
+    else if (enSm >= 19) pctFsp = 1.8;
+    else if (enSm >= 18) pctFsp = 1.6;
+    else if (enSm >= 17) pctFsp = 1.4;
+    else if (enSm >= 16) pctFsp = 1.2;
+    else if (enSm >= 4)  pctFsp = 1.0;
+    var fspTotal = ibcTope * pctFsp/100;
+    var solidaridad = pctFsp ? ibcTope * 0.5/100 : 0;
+    var subsistencia = fspTotal - solidaridad;
+
+    var uvt = P.uvt;
+    var ingresoGravado = ibc + otrosGravados;
+    var neto1 = ingresoGravado - salud - pension - fspTotal;
+    var dDep = S.rte.dependientes ? Math.min(ingresoGravado*0.10, 32*uvt) : 0;
+    var dPre = Math.min(Number(S.rte.prepagada)||0, 16*uvt);
+    var dViv = Math.min(Number(S.rte.vivienda)||0, 100*uvt);
+    var reVol = Math.min(Number(S.rte.voluntarios)||0, ingresoGravado*0.30, 3800*uvt/12);
+    var previo = Math.max(0, neto1 - dDep - dPre - dViv - reVol);
+    var exenta25 = Math.min(previo*0.25, 790*uvt);
+    var beneficios = dDep + dPre + dViv + reVol + exenta25;
+    var tope = Math.min(neto1*0.40, 1340*uvt/12);
+    var baseGravable = Math.max(0, neto1 - Math.min(beneficios, Math.max(0,tope)));
+    var bu = uvt ? baseGravable/uvt : 0, impUvt = 0;
+    if (bu > 2300) impUvt = (bu-2300)*0.39 + 770;
+    else if (bu > 945) impUvt = (bu-945)*0.37 + 268;
+    else if (bu > 640) impUvt = (bu-640)*0.35 + 162;
+    else if (bu > 360) impUvt = (bu-360)*0.33 + 69;
+    else if (bu > 150) impUvt = (bu-150)*0.28 + 10;
+    else if (bu > 95)  impUvt = (bu-95)*0.19;
+    var rteAuto = Math.round(impUvt*uvt/1000)*1000;
+    var rte = (S.rte.modo === 'manual') ? (Number(S.rte.manual)||0) : rteAuto;
+
+    var otrosDesc = 0;
+    S.descuentos.forEach(function(d){ otrosDesc += Number(d.v)||0; });
+
+    var totalDevengos = S.salarioBase + valorHoras + otrosSalariales + otrosNoSalariales;
+    var legales = salud + pension + fspTotal + rte;
+    var totalDescuentos = legales + otrosDesc;
+
+    var basePrest = S.salarioBase + valorHoras + otrosSalariales;
+    var prov = {
+      prima: basePrest*0.0833, cesantias: basePrest*0.0833,
+      intereses: basePrest*0.0833*0.01, vacaciones: (S.salarioBase + otrosSalariales)*0.0417
+    };
+    prov.total = prov.prima + prov.cesantias + prov.intereses + prov.vacaciones;
+
+    return {
+      habiles:habiles, fest:fest, trabajados:trabajados, horasMes:horasMes, divisor:divisor,
+      horaLegal:horaLegal, horaBase:horaBase, detHoras:detHoras, totalHoras:totalHoras, valorHoras:valorHoras,
+      otrosSalariales:otrosSalariales, otrosNoSalariales:otrosNoSalariales,
+      ibc:ibc, salud:salud, pension:pension, solidaridad:solidaridad, subsistencia:subsistencia,
+      fspTotal:fspTotal, pctFsp:pctFsp, baseGravable:baseGravable, rte:rte, rteAuto:rteAuto,
+      legales:legales, otrosDesc:otrosDesc, totalDevengos:totalDevengos, totalDescuentos:totalDescuentos,
+      neto: totalDevengos - totalDescuentos, prov:prov,
+      minLegalExtra: horaLegal * (1 + S.params.pct.ed/100)
+    };
+  }
+
+  /* ---------- pintado ---------- */
+  function lineaHTML(l, n, sub){
+    return '<div class="linea'+(sub?' sub':'')+'"><span class="l">'+l+'</span><span class="puntos"></span><span class="n">'+n+'</span></div>';
+  }
+
+  function pintar(){
+    var c = calcular();
+
+    el('neto').textContent = money(c.neto);
+    el('neto2').textContent = money(c.neto);
+    el('mini-dev').textContent = money(c.totalDevengos);
+    el('mini-des').textContent = money(c.totalDescuentos);
+    el('mini-horas').textContent = FMT1.format(c.totalHoras) + ' h';
+
+    el('c-habiles').textContent = c.habiles;
+    el('c-trabajados').textContent = c.trabajados;
+    el('c-horas').textContent = FMT1.format(c.horasMes) + ' h';
+    el('c-hora').textContent = money(c.horaLegal);
+
+    var fl = festivosMes();
+    el('lista-festivos').innerHTML = fl.length
+      ? fl.map(function(f){ return '<span class="f">'+DIAS[f.d.getDay()]+' '+f.d.getDate()+' · '+f.n+'</span>'; }).join('')
+      : '<span style="color:var(--tinta-suave)">Sin festivos entre semana este mes.</span>';
+
+    var td = c.totalDevengos || 1;
+    var ss = c.salud + c.pension + c.fspTotal;
+    var pNeto = Math.max(0,c.neto)/td*100, pSs = ss/td*100, pRte = c.rte/td*100, pOtros = c.otrosDesc/td*100;
+    var segs = el('barra').children;
+    segs[0].style.width = pNeto+'%'; segs[1].style.width = pSs+'%';
+    segs[2].style.width = pRte+'%';  segs[3].style.width = pOtros+'%';
+    el('pc-neto').textContent = pNeto.toFixed(1)+'%';
+    el('pc-ss').textContent = pSs.toFixed(1)+'%';
+    el('pc-rte').textContent = pRte.toFixed(1)+'%';
+    el('pc-otros').textContent = pOtros.toFixed(1)+'%';
+
+    TIPOS.forEach(function(t){
+      var tarifa = c.horaBase * (1 + S.params.pct[t.id]/100);
+      var q = Number(S.horas[t.id])||0;
+      var tEl = el('tarifa-'+t.id), vEl = el('valor-'+t.id);
+      if (tEl) tEl.textContent = money(tarifa) + ' / hora · recargo ' + S.params.pct[t.id] + '%';
+      if (vEl){ vEl.textContent = money(q*tarifa); vEl.className = 'valor' + (q ? '' : ' cero'); }
+    });
+    el('txt-horas').textContent = FMT1.format(c.totalHoras) + (c.totalHoras === 1 ? ' hora adicional' : ' horas adicionales');
+    el('valor-extras').textContent = money(c.valorHoras);
+
+    var av = el('avisoTarifa');
+    if (S.modo === 'pactada'){
+      var dif = S.tarifaHora - c.minLegalExtra;
+      if (Math.abs(dif) < 1){
+        av.innerHTML = '<div class="aviso ok"><span class="ico">✓</span><span>La tarifa del contrato equivale exactamente al mínimo legal de la hora extra diurna: '+money(c.horaLegal)+' de hora ordinaria más el 25%.</span></div>';
+      } else if (dif > 0){
+        av.innerHTML = '<div class="aviso ok"><span class="ico">✓</span><span>La tarifa del contrato supera el mínimo legal de la hora extra diurna, que sería '+money(c.minLegalExtra)+'.</span></div>';
+      } else {
+        av.innerHTML = '<div class="aviso ojo"><span class="ico">!</span><span>La tarifa del contrato queda por debajo del mínimo legal de la hora extra diurna ('+money(c.minLegalExtra)+'). Vale la pena revisarlo.</span></div>';
+      }
+    } else { av.innerHTML = ''; }
+
+    el('avisoLimite').innerHTML = (c.totalHoras > 48)
+      ? '<div class="aviso ojo"><span class="ico">!</span><span>Van '+FMT1.format(c.totalHoras)+' horas adicionales. El tope legal es de 2 al día y 12 a la semana, unas 48 al mes.</span></div>'
+      : '';
+
+    var h = '';
+    h += lineaHTML('Salario base', money(S.salarioBase));
+    h += lineaHTML('Jornada del mes', FMT1.format(c.horasMes)+' h', true);
+    c.detHoras.forEach(function(d){
+      h += lineaHTML(d.nombre + ' <span style="color:var(--tinta-suave)">× '+FMT1.format(d.q)+' h</span>', money(d.valor));
+    });
+    S.devengos.forEach(function(d){ if ((Number(d.v)||0) !== 0) h += lineaHTML(d.n || 'Devengo', money(d.v)); });
+    el('det-devengos').innerHTML = h;
+    el('t-devengos').textContent = money(c.totalDevengos);
+
+    h = '';
+    h += lineaHTML('Salud empleado ('+S.params.salud+'%)', money(c.salud));
+    h += lineaHTML('Pensión empleado ('+S.params.pension+'%)', money(c.pension));
+    if (c.pctFsp){
+      h += lineaHTML('Subcuenta de solidaridad', money(c.solidaridad));
+      h += lineaHTML('Subcuenta de subsistencia', money(c.subsistencia));
+    }
+    h += lineaHTML('Retención en la fuente' + (S.rte.modo==='manual' ? ' <span style="color:var(--tinta-suave)">(manual)</span>' : ''), money(c.rte));
+    if (S.rte.modo === 'manual') h += lineaHTML('Cálculo estimado', money(c.rteAuto), true);
+    el('det-legales').innerHTML = h;
+    el('t-legales').textContent = money(c.legales);
+
+    h = '';
+    S.descuentos.forEach(function(d){ if ((Number(d.v)||0) !== 0) h += lineaHTML(d.n || 'Descuento', money(d.v)); });
+    el('det-otros').innerHTML = h || '<div class="linea sub"><span class="l">Ninguno</span><span class="puntos"></span><span class="n">$ 0</span></div>';
+    el('t-otros').textContent = money(c.otrosDesc);
+
+    el('b-ibc').textContent = money(c.ibc);
+    el('b-rte').textContent = money(c.baseGravable);
+
+    h = lineaHTML('Prima de servicios', money(c.prov.prima))
+      + lineaHTML('Cesantías', money(c.prov.cesantias))
+      + lineaHTML('Intereses a las cesantías', money(c.prov.intereses))
+      + lineaHTML('Vacaciones', money(c.prov.vacaciones));
+    el('det-prov').innerHTML = h;
+    el('t-prov').textContent = money(c.prov.total);
+
+    el('fecha-nota').textContent = 'Periodo de ' + MESES[S.mesIdx] + ' de ' + S.anio;
+    if (document.activeElement !== el('festivos')) el('festivos').value = numFestivos();
+
+    guardarPronto();
+  }
+
+  /* ---------- controles ---------- */
+  function bindDinero(input, leer, escribir){
+    input.value = FMT.format(leer());
+    input.addEventListener('focus', function(){ input.value = String(leer() || ''); input.select(); });
+    input.addEventListener('input', function(){ escribir(parseNum(input.value)); pintar(); });
+    input.addEventListener('blur', function(){ input.value = FMT.format(leer()); });
+  }
+
+  function filaHora(t){
+    var d = document.createElement('div');
+    d.className = 'hora';
+    d.innerHTML =
+      '<div><div class="nombre">'+t.nombre+' <span style="color:var(--tinta-suave);font-size:12px">· '+t.detalle+'</span></div><span class="tarifa" id="tarifa-'+t.id+'"></span></div>' +
+      '<div class="paso">' +
+        '<button type="button" aria-label="Restar media hora">–</button>' +
+        '<input type="number" min="0" step="0.5" id="h-'+t.id+'" aria-label="Horas de '+t.nombre+'">' +
+        '<button type="button" aria-label="Sumar media hora">+</button>' +
+      '</div>' +
+      '<div class="valor cero" id="valor-'+t.id+'">$ 0</div>';
+    var inp = d.querySelector('input'), btns = d.querySelectorAll('button');
+    inp.value = S.horas[t.id] || 0;
+    function set(v){ v = Math.max(0, Math.round(v*2)/2); S.horas[t.id] = v; inp.value = v; pintar(); }
+    btns[0].addEventListener('click', function(){ set((Number(S.horas[t.id])||0) - 0.5); });
+    btns[1].addEventListener('click', function(){ set((Number(S.horas[t.id])||0) + 0.5); });
+    inp.addEventListener('input', function(){ S.horas[t.id] = Math.max(0, Number(inp.value)||0); pintar(); });
+    return d;
+  }
+
+  function pintarListaDevengos(){
+    var cont = el('lista-devengos');
+    cont.innerHTML = '';
+    S.devengos.forEach(function(d, i){
+      var row = document.createElement('div');
+      row.innerHTML =
+        '<div class="item">' +
+          '<input type="text" class="nombre-item" placeholder="Concepto">' +
+          '<input type="text" inputmode="numeric">' +
+          '<button class="quitar" type="button" aria-label="Quitar">×</button>' +
+        '</div>' +
+        '<div class="marca">' +
+          '<label class="marca" style="margin:0"><input type="checkbox" class="c-sal"> salarial</label>' +
+          '<label class="marca" style="margin:0 0 0 14px"><input type="checkbox" class="c-gra"> gravado</label>' +
+        '</div>';
+      var inputs = row.querySelectorAll('input');
+      inputs[0].value = d.n;
+      inputs[0].addEventListener('input', function(){ d.n = inputs[0].value; pintar(); });
+      bindDinero(inputs[1], function(){ return d.v; }, function(v){ d.v = v; });
+      var cs = row.querySelector('.c-sal'), cg = row.querySelector('.c-gra');
+      cs.checked = !!d.salarial; cg.checked = !!d.gravado;
+      cs.addEventListener('change', function(){ d.salarial = cs.checked; pintar(); });
+      cg.addEventListener('change', function(){ d.gravado = cg.checked; pintar(); });
+      row.querySelector('.quitar').addEventListener('click', function(){ S.devengos.splice(i,1); pintarListaDevengos(); pintar(); });
+      cont.appendChild(row);
+    });
+  }
+
+  function pintarListaDescuentos(){
+    var cont = el('lista-descuentos');
+    cont.innerHTML = '';
+    S.descuentos.forEach(function(d, i){
+      var row = document.createElement('div');
+      row.className = 'item';
+      row.innerHTML =
+        '<input type="text" class="nombre-item" placeholder="Concepto">' +
+        '<input type="text" inputmode="numeric">' +
+        '<button class="quitar" type="button" aria-label="Quitar">×</button>';
+      var inputs = row.querySelectorAll('input');
+      inputs[0].value = d.n;
+      inputs[0].addEventListener('input', function(){ d.n = inputs[0].value; pintar(); });
+      bindDinero(inputs[1], function(){ return d.v; }, function(v){ d.v = v; });
+      row.querySelector('.quitar').addEventListener('click', function(){ S.descuentos.splice(i,1); pintarListaDescuentos(); pintar(); });
+      cont.appendChild(row);
+    });
+  }
+
+  function pintarParamsRecargos(){
+    var cont = el('p-recargos');
+    cont.innerHTML = '';
+    TIPOS.forEach(function(t){
+      var lab = document.createElement('label');
+      lab.className = 'campo';
+      lab.textContent = t.nombre;
+      var inp = document.createElement('input');
+      inp.type = 'number'; inp.step = '1'; inp.value = S.params.pct[t.id];
+      inp.addEventListener('input', function(){ S.params.pct[t.id] = Number(inp.value)||0; pintar(); });
+      lab.appendChild(inp);
+      cont.appendChild(lab);
+    });
+  }
+
+  function modoRte(){
+    var auto = S.rte.modo === 'auto';
+    el('rte-auto').setAttribute('aria-pressed', auto ? 'true':'false');
+    el('rte-manual').setAttribute('aria-pressed', auto ? 'false':'true');
+    el('rte-campos').style.display = auto ? '' : 'none';
+    el('rte-manual-campo').style.display = auto ? 'none' : '';
+  }
+
+  function dosDigitos(n){ return (n<9? '0':'') + (n+1); }
+
+  function iniciar(){
+    var ex = el('lista-extras');
+    ex.innerHTML = '';
+    TIPOS.forEach(function(t){ ex.appendChild(filaHora(t)); });
+
+    bindDinero(el('salarioBase'), function(){ return S.salarioBase; }, function(v){ S.salarioBase = v; });
+    bindDinero(el('tarifaHora'), function(){ return S.tarifaHora; }, function(v){ S.tarifaHora = v; });
+    bindDinero(el('prepagada'), function(){ return S.rte.prepagada; }, function(v){ S.rte.prepagada = v; });
+    bindDinero(el('vivienda'), function(){ return S.rte.vivienda; }, function(v){ S.rte.vivienda = v; });
+    bindDinero(el('voluntarios'), function(){ return S.rte.voluntarios; }, function(v){ S.rte.voluntarios = v; });
+    bindDinero(el('rteManual'), function(){ return S.rte.manual; }, function(v){ S.rte.manual = v; });
+    bindDinero(el('p-uvt'), function(){ return S.params.uvt; }, function(v){ S.params.uvt = v; });
+    bindDinero(el('p-smlmv'), function(){ return S.params.smlmv; }, function(v){ S.params.smlmv = v; });
+
+    var mes = el('mes');
+    mes.value = S.anio + '-' + dosDigitos(S.mesIdx);
+    mes.addEventListener('change', function(){
+      var p = mes.value.split('-');
+      if (p.length === 2){
+        S.anio = Number(p[0]); S.mesIdx = Number(p[1]) - 1;
+        S.festivos = null;              /* vuelve al conteo automático del nuevo mes */
+        pintar();
+      }
+    });
+
+    el('horasDia').value = S.horasDia;
+    el('horasDia').addEventListener('input', function(e){ S.horasDia = Math.max(0, Number(e.target.value)||0); pintar(); });
+
+    el('festivos').value = numFestivos();
+    el('festivos').addEventListener('input', function(e){
+      S.festivos = e.target.value === '' ? null : Math.max(0, Number(e.target.value)||0);
+      pintar();
+    });
+
+    el('modo').value = S.modo;
+    el('modo').addEventListener('change', function(e){ S.modo = e.target.value; pintar(); });
+
+    el('p-salud').value = S.params.salud;
+    el('p-salud').addEventListener('input', function(e){ S.params.salud = Number(e.target.value)||0; pintar(); });
+    el('p-pension').value = S.params.pension;
+    el('p-pension').addEventListener('input', function(e){ S.params.pension = Number(e.target.value)||0; pintar(); });
+    el('p-horasSemana').value = S.params.horasSemana;
+    el('p-horasSemana').addEventListener('input', function(e){ S.params.horasSemana = Number(e.target.value)||40; pintar(); });
+
+    el('dependientes').checked = !!S.rte.dependientes;
+    el('dependientes').addEventListener('change', function(e){ S.rte.dependientes = e.target.checked; pintar(); });
+    el('rte-auto').addEventListener('click', function(){ S.rte.modo='auto'; modoRte(); pintar(); });
+    el('rte-manual').addEventListener('click', function(){ S.rte.modo='manual'; modoRte(); pintar(); });
+
+    el('add-devengo').addEventListener('click', function(){
+      S.devengos.push({n:'', v:0, salarial:false, gravado:true}); pintarListaDevengos(); pintar();
+    });
+    el('add-descuento').addEventListener('click', function(){
+      S.descuentos.push({n:'', v:0}); pintarListaDescuentos(); pintar();
+    });
+    el('restaurar').addEventListener('click', function(){
+      S.params = JSON.parse(JSON.stringify(PARAMS_BASE));
+      el('p-uvt').value = FMT.format(S.params.uvt);
+      el('p-smlmv').value = FMT.format(S.params.smlmv);
+      el('p-salud').value = S.params.salud;
+      el('p-pension').value = S.params.pension;
+      el('p-horasSemana').value = S.params.horasSemana;
+      pintarParamsRecargos(); pintar();
+    });
+    el('limpiar-horas').addEventListener('click', function(){
+      TIPOS.forEach(function(t){ S.horas[t.id] = 0; var i = el('h-'+t.id); if(i) i.value = 0; });
+      pintar();
+    });
+
+    pintarListaDevengos();
+    pintarListaDescuentos();
+    pintarParamsRecargos();
+    modoRte();
+    pintar();
+  }
+
+  cargar(iniciar);
+})();
+</script>
+</body>
+</html>
